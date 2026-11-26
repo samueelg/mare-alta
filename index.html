@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Maré Alta: do improviso ao processo</title>
+    <link rel="preload" href="vendor/fontes/pixelify-sans-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="vendor/fontes/pixelify-sans-700.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main>
+      <div id="palco">
+        <section id="tela" hidden></section>
+      </div>
+      <button id="telaCheia" title="Tela cheia (F)">Tela cheia · F</button>
+    </main>
+    <!-- Phaser fica salvo localmente para o jogo funcionar sem internet -->
+    <script src="vendor/phaser.min.js"></script>
+    <script type="module" src="src/main.js"></script>
+  </body>
+</html>
