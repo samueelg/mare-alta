@@ -1,0 +1,237 @@
+/* Visual pixel art. As molduras e ícones (--moldura, .ico-*) são gerados em src/cena/pixel.js,
+   com a mesma paleta do canvas. Tudo aqui é desenhado em 960×540 e escalado junto com o jogo. */
+
+@font-face {
+  font-family: 'Pixelify Sans';
+  src: url('vendor/fontes/pixelify-sans-400.woff2') format('woff2');
+  font-weight: 400;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Pixelify Sans';
+  src: url('vendor/fontes/pixelify-sans-700.woff2') format('woff2');
+  font-weight: 700;
+  font-display: block;
+}
+
+:root {
+  --tinta: #3b2a2a;
+  --tinta-media: #7a4a34;
+  --clara: #f6ead0;
+  --perg: #f6ead0;
+  --perg2: #e8d3a8;
+  --perg3: #c9a878;
+  --mad0: #4e2f25;
+  --mad1: #7a4a34;
+  --mad2: #a26a45;
+  --contorno: #2a1f2d;
+  --ok: #3f7356;
+  --ok-claro: #5d9a6c;
+  --alerta: #a8641e;
+  --amarelo: #f2c14e;
+  --perigo: #9e3d3a;
+  --fundo: #120d17;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--fundo);
+  overflow: hidden;
+}
+
+body {
+  font: 16px/1.35 'Pixelify Sans', monospace;
+  color: var(--tinta);
+}
+
+/* ---------------- tela cheia: o palco ocupa a janela inteira em 16:9 ---------------- */
+
+main {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#palco {
+  position: relative;
+  width: min(100vw, calc(100vh * 16 / 9));
+  height: min(100vh, calc(100vw * 9 / 16));
+  overflow: hidden;
+  background: var(--fundo);
+}
+
+#palco canvas { display: block; }
+
+#telaCheia {
+  position: fixed;
+  right: 8px;
+  bottom: 8px;
+  z-index: 20;
+  font-size: 13px;
+  opacity: 0.75;
+}
+:root:fullscreen #telaCheia { display: none; }
+
+/* ---------------- camada de telas HTML ---------------- */
+
+#tela {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 960px;
+  height: 540px;
+  transform: scale(var(--k, 1));
+  transform-origin: 0 0;
+  z-index: 10;
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--agua) repeat;
+  background-size: 96px 96px;
+  image-rendering: pixelated;
+}
+
+/* Garante que `hidden` sempre vença (antes o display:flex do .modal deixava o fundo escuro na tela) */
+#tela[hidden] { display: none !important; }
+
+#tela.modal { background: rgba(18, 13, 23, 0.55); }
+
+/* slice 15 = 5 pixels de arte: contorno + madeira + filete + sombra interna ficam na borda, e o
+   miolo esticado é só pergaminho liso */
+.cartao {
+  border: 15px solid transparent;
+  border-image: var(--moldura) 15 fill stretch;
+  image-rendering: pixelated;
+  padding: 9px 18px 12px;
+  width: 100%;
+  max-width: 630px;
+  max-height: 100%;
+  overflow: auto;
+}
+.cartao.largo { max-width: 900px; }
+
+.cartao::-webkit-scrollbar { width: 12px; }
+.cartao::-webkit-scrollbar-track { background: var(--perg2); }
+.cartao::-webkit-scrollbar-thumb { background: var(--mad2); border: 3px solid var(--mad0); }
+
+h1, h2, h3 { margin: 0.25em 0 0.4em; line-height: 1.1; }
+h1 { font-size: 39px; color: var(--mad1); text-shadow: 3px 3px 0 var(--perg3); }
+h2 { font-size: 21px; color: var(--mad0); display: flex; align-items: center; gap: 9px; }
+h3 { font-size: 13px; color: var(--tinta-media); text-transform: uppercase; letter-spacing: 0.06em; }
+h1.vitoria { color: var(--alerta); }
+h1.derrota { color: var(--perigo); }
+p { margin: 6px 0; }
+
+/* ---------------- botões e teclas em pixel ---------------- */
+
+button {
+  font: inherit;
+  font-weight: 700;
+  color: var(--tinta);
+  background: transparent;
+  border: 9px solid transparent;
+  border-image: var(--moldura-simples) 9 fill stretch;
+  image-rendering: pixelated;
+  padding: 0 6px;
+  cursor: pointer;
+  margin: 6px 6px 6px 0;
+  text-align: left;
+}
+button:hover:not(:disabled) { transform: translateY(-3px); }
+button:active:not(:disabled) { transform: translateY(3px); }
+button:disabled { opacity: 0.5; filter: grayscale(0.7); cursor: not-allowed; }
+button small { display: block; font-weight: 400; font-size: 13px; color: var(--tinta-media); }
+button.primario { border-image-source: var(--moldura-fita); }
+
+.cabecalho { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.cabecalho button { margin: 0; flex: none; }
+
+kbd {
+  display: inline-block;
+  min-width: 27px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 400;
+  text-align: center;
+  border: 6px solid transparent;
+  border-image: var(--moldura-tecla) 6 fill stretch;
+  padding: 0 3px 3px;
+  margin-right: 6px;
+  image-rendering: pixelated;
+}
+
+.botoes-col { display: flex; flex-direction: column; }
+.botoes-col button { width: 100%; }
+
+/* ---------------- ícones pixel ---------------- */
+
+.ico {
+  display: inline-block;
+  vertical-align: middle;
+  background-size: 100% 100%;
+  image-rendering: pixelated;
+  margin: -3px 6px 0 0;
+}
+
+/* ---------------- blocos ---------------- */
+
+.status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 18px;
+  padding: 6px 12px;
+  background: var(--perg2);
+  box-shadow: 0 0 0 3px var(--perg3);
+  margin: 3px 3px 12px;
+  font-size: 15px;
+}
+.maturidade { margin-left: auto; padding: 0 9px; color: var(--clara); box-shadow: 0 0 0 3px var(--contorno); }
+.maturidade.nivel-0 { background: var(--perigo); }
+.maturidade.nivel-1 { background: var(--alerta); }
+.maturidade.nivel-2 { background: var(--ok-claro); }
+.maturidade.nivel-3 { background: var(--ok); }
+
+.capa { text-align: center; }
+.capa .sub { color: var(--alerta); margin-top: -6px; font-size: 18px; font-weight: 700; }
+.capa .cena-capa { display: flex; justify-content: center; align-items: flex-end; gap: 18px; margin: 6px 0; }
+.capa .barco { width: 156px; height: 72px; background: var(--barco) no-repeat; background-size: 100% 100%; image-rendering: pixelated; }
+.capa .boneco { width: 60px; height: 84px; background-size: 360px 84px; background-position: 0 0; image-rendering: pixelated; }
+.lista { text-align: left; list-style: none; padding: 0; margin: 6px 0; font-size: 14px; }
+.lista li { margin: 6px 0; }
+.lista li.titulo { font-weight: 700; color: var(--mad1); }
+
+blockquote { margin: 6px 0; font-size: 19px; color: var(--mad0); }
+.preco, .nota { color: var(--tinta-media); font-size: 13px; }
+
+.caixa { background: var(--perg2); box-shadow: inset 6px 0 0 var(--perg3); padding: 6px 12px 6px 18px; margin: 9px 0; }
+.caixa.ok { box-shadow: inset 6px 0 0 var(--ok-claro); }
+.caixa.alerta { box-shadow: inset 6px 0 0 var(--amarelo); }
+.caixa.neutro { box-shadow: inset 6px 0 0 var(--perg3); }
+
+.tag { display: inline-block; font-size: 13px; padding: 0 9px; background: var(--ok-claro); color: var(--clara); box-shadow: 0 0 0 3px var(--contorno); margin: 3px 3px 0; }
+
+.colunas { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+
+.tabela { border-collapse: collapse; width: 100%; font-size: 14px; margin: 6px 0; }
+.tabela th, .tabela td { text-align: left; padding: 3px 9px; border-bottom: 3px solid var(--perg2); }
+.tabela th { color: var(--mad1); }
+.ok-t { color: var(--ok); }
+.erro-t { color: var(--perigo); }
+
+.processos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 9px 3px; }
+.processo { background: var(--perg2); box-shadow: 0 0 0 3px var(--mad0), inset 0 3px 0 #fff7e6; padding: 6px 12px; }
+.processo.adotado { box-shadow: 0 0 0 3px var(--ok), inset 0 3px 0 #fff7e6; }
+.processo p { font-size: 12px; line-height: 1.25; color: var(--tinta-media); margin: 3px 0; }
+.processo button { margin: 3px 0 0; }
+.processo .nome { font-weight: 700; color: var(--mad0); }
+.area { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--alerta); }
+
+.licao { background: var(--perg2); box-shadow: inset 6px 0 0 var(--perigo); padding: 6px 12px 6px 18px; margin: 9px 0; font-size: 14px; }
+.licao.acerto { box-shadow: inset 6px 0 0 var(--ok-claro); }
